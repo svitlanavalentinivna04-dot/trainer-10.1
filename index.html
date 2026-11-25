@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тренажер: Google Workspace — Практична підготовка секретарів</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --text: #1b2432;
+      --muted: #5b687c;
+      --primary: #1a56db;
+      --primary-hover: #1443ab;
+      --success: #0e7a4b;
+      --success-bg: #e7f6ee;
+      --warn: #9a5b00;
+      --warn-bg: #fff6e5;
+      --danger: #b42318;
+      --danger-bg: #fef3f2;
+      --border: #d8e0ec;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .topbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 2px 0 0;
+    }
+
+    .score-badge {
+      background: #eef4ff;
+      color: var(--primary);
+      border: 1px solid #c7dafc;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .stepper {
+      max-width: 1080px;
+      margin: 16px auto 0;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 820px) {
+      .stepper { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .step-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      transition: 0.15s ease;
+    }
+
+    .step-btn:hover { border-color: var(--primary); }
+    .step-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 18px auto 48px;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 2px 10px rgba(16, 24, 40, 0.04);
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    h1, h2, h3 { margin-top: 0; }
+    .lead { color: var(--muted); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 760px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    label.field-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .radio-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #fafbfe;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-secondary {
+      background: #f2f5fa;
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .btn-secondary:hover { background: #e6ecf5; }
+
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .nav-footer {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .nav-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .feedback {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .feedback.ok { background: var(--success-bg); color: var(--success); border: 1px solid #a6e0c2; }
+    .feedback.warn { background: var(--warn-bg); color: var(--warn); border: 1px solid #f7d694; }
+    .feedback.err { background: var(--danger-bg); color: var(--danger); border: 1px solid #fecdca; }
+
+    .doc-preview-box {
+      margin-top: 18px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 24px;
+      background: #fff;
+    }
+
+    .doc-memo {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .doc-recipient {
+      text-align: right;
+      margin-bottom: 18px;
+      white-space: pre-line;
+    }
+
+    .doc-heading {
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin: 16px 0;
+    }
+
+    .doc-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 0.95em;
+    }
+
+    .doc-body p {
+      margin: 0 0 12px;
+    }
+
+    .doc-sign {
+      margin-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 14px 0;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    table.sheet {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    table.sheet th, table.sheet td {
+      border: 1px solid #cbd5e1;
+      padding: 7px 9px;
+    }
+
+    table.sheet th {
+      background: #f1f5f9;
+      text-align: left;
+    }
+
+    table.sheet.styled th {
+      background: #1a56db;
+      color: #fff;
+    }
+
+    table.sheet.styled tr.total-row td {
+      background: #eef4ff;
+      font-weight: 700;
+    }
+
+    .q-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #fafbfe;
+    }
+
+    .q-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+
+    .summary-table th, .summary-table td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .summary-table th { background: #f4f7fb; }
+
+    /* Модальне вікно спільного доступу */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal-card {
+      background: #fff;
+      border-radius: var(--radius);
+      max-width: 460px;
+      width: 100%;
+      padding: 22px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-actions {
+      margin-top: 18px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    @media print {
+      .topbar, .stepper, .nav-footer, .no-print { display: none !important; }
+      .screen { display: block !important; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div>
+      <div class="brand-sub">Google Workspace • Тренажер секретаря керівника</div>
+      <div class="brand-title">Тренажер: Google Workspace — Практична підготовка секретарів</div>
+    </div>
+    <div class="score-badge" id="topScoreBadge">Бали: 0 / 12</div>
+  </div>
+</header>
+
+<nav class="stepper" aria-label="Етапи тренажера">
+  <button type="button" class="step-btn active" data-step="0" onclick="goToStep(0)">1. Старт</button>
+  <button type="button" class="step-btn" data-step="1" onclick="goToStep(1)">2. Документи (<span id="navScore1">0</span>–4)</button>
+  <button type="button" class="step-btn" data-step="2" onclick="goToStep(2)">3. Таблиці (<span id="navScore2">0</span>–4)</button>
+  <button type="button" class="step-btn" data-step="3" onclick="goToStep(3)">4. Форми (<span id="navScore3">0</span>–4)</button>
+  <button type="button" class="step-btn" data-step="4" onclick="goToStep(4)">5. Підсумок (12)</button>
+</nav>
+
+<main class="container">
+
+  <!-- 1. СТАРТ -->
+  <section class="card screen active" id="screen-0">
+    <h1>Інтерактивний практичний тренажер</h1>
+    <p class="lead">
+      Тренажер створено за інструкційно-технологічною карткою для закріплення навичок роботи з
+      <strong>Google Документами</strong>, <strong>Google Таблицями</strong> та <strong>Google Формами</strong>.
+      Максимальна оцінка — <strong>12 балів</strong> (по 4 бали за кожен модуль).
+    </p>
+
+    <div class="grid-2" style="margin-top: 20px;">
+      <div>
+        <label class="field-label" for="studentName">Прізвище та ім’я студента</label>
+        <input type="text" id="studentName" placeholder="Наприклад: Коваленко Олена" oninput="updateSummaryCard()" />
+      </div>
+      <div>
+        <label class="field-label">Навчальна група</label>
+        <div class="radio-group">
+          <label class="radio-chip"><input type="radio" name="studentGroup" value="31-С (3 курс)" onchange="toggleCustomGroup(); updateSummaryCard();" /> 31-С (3 курс)</label>
+          <label class="radio-chip"><input type="radio" name="studentGroup" value="32-С (3 курс)" onchange="toggleCustomGroup(); updateSummaryCard();" /> 32-С (3 курс)</label>
+          <label class="radio-chip"><input type="radio" name="studentGroup" value="Інша група" onchange="toggleCustomGroup(); updateSummaryCard();" /> Інша група</label>
+        </div>
+        <div id="customGroupWrap" style="display:none; margin-top:10px;">
+          <input type="text" id="customGroupInput" placeholder="Вкажіть назву групи" oninput="updateSummaryCard()" />
+        </div>
+      </div>
+    </div>
+
+    <div id="startFeedback" class="feedback"></div>
+
+    <div class="nav-footer">
+      <span class="lead" style="font-size:13px;">Заповніть дані та перейдіть до першого завдання.</span>
+      <div class="nav-right">
+        <button type="button" class="btn btn-primary" onclick="startPractice()">Почати практику →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. ЗАВДАННЯ 1 -->
+  <section class="card screen" id="screen-1">
+    <h2>Завдання 1. Оформлення та погодження службової записки (Google Документи)</h2>
+    <p class="lead">
+      Налаштуйте параметри сторінки, шрифт, інтервал, відступ першого рядка, перевірте реквізити службової записки
+      та надайте спільний доступ у режимі <strong>Коментатор</strong>.
+    </p>
+
+    <div class="grid-3">
+      <div>
+        <label class="field-label" for="docTitleInput">Назва файлу</label>
+        <input type="text" id="docTitleInput" placeholder="Напр.: Службова записка_закупівля" oninput="applyDocPreview()" />
+      </div>
+      <div>
+        <label class="field-label" for="docMargins">Поля (ліве / праве / верх-низ)</label>
+        <select id="docMargins" onchange="applyDocPreview()">
+          <option value="">-- Оберіть --</option>
+          <option value="2 см / 2 см / 2 см">2 см / 2 см / 2 см</option>
+          <option value="3 см / 1,5 см / 2 см">3 см / 1,5 см / 2 см</option>
+          <option value="1,5 см / 3 см / 1 см">1,5 см / 3 см / 1 см</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label" for="docFont">Шрифт і розмір</label>
+        <select id="docFont" onchange="applyDocPreview()">
+          <option value="">-- Оберіть --</option>
+          <option value="Arial, 12 пт">Arial, 12 пт</option>
+          <option value="Times New Roman, 14 пт">Times New Roman, 14 пт</option>
+          <option value="Calibri, 11 пт">Calibri, 11 пт</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label" for="docSpacing">Інтервал</label>
+        <select id="docSpacing" onchange="applyDocPreview()">
+          <option value="">-- Оберіть --</option>
+          <option value="1.0">1.0</option>
+          <option value="1.15">1.15</option>
+          <option value="2.0">2.0</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label" for="docIndent">Абзацний відступ</label>
+        <select id="docIndent" onchange="applyDocPreview()">
+          <option value="">-- Оберіть --</option>
+          <option value="0 см">0 см</option>
+          <option value="1,25 см">1,25 см</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Спільний доступ</label>
+        <div class="toolbar-row" style="margin:0;">
+          <button type="button" class="btn btn-secondary" onclick="openShareModal()">Поділитися</button>
+          <span style="font-size:13px;">Статус: <strong id="shareStatusText">Не надано</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-preview-box">
+      <div class="doc-memo" id="docMemoPreview">
+        <div class="doc-recipient">Керівнику ТОВ «Офіс-Технології»
+Олегу ІВАНЕНКУ</div>
+        <div class="doc-heading">СЛУЖБОВА ЗАПИСКА</div>
+        <div class="doc-meta">
+          <span>18.11.2026 № 12</span>
+          <span>м. Дніпро</span>
+        </div>
+        <div class="doc-body">
+          <p>Прошу надати дозвіл на закупівлю витратних матеріалів для забезпечення безперебійної роботи офісу у зв’язку з вичерпанням поточних запасів паперу та канцтоварів.</p>
+          <p>Перелік необхідних позицій:<br />
+          — папір для принтера А4 (5 пачок);<br />
+          — ручки кулькові сині (20 шт.);<br />
+          — папки-реєстратори (10 шт.).</p>
+          <p>Орієнтовна вартість замовлення становить 1500 (одна тисяча п'ятсот) гривень. Закупівлю планується здійснити у постачальника ТОВ «Канц-Плюс».</p>
+        </div>
+        <div class="doc-sign">
+          <span>Менеджер адміністративного відділу</span>
+          <span><em>(особистий підпис)</em> <strong>Каріна ПЕТРЕНКО</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div id="feedback1" class="feedback"></div>
+
+    <div class="nav-footer">
+      <button type="button" class="btn btn-secondary" onclick="goToStep(0)">← Назад</button>
+      <div class="nav-right">
+        <button type="button" class="btn btn-success" onclick="checkTask1()">Перевірити Завдання 1</button>
+        <button type="button" class="btn btn-primary" onclick="goToStep(2)">Далі: Таблиці →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. ЗАВДАННЯ 2 -->
+  <section class="card screen" id="screen-2">
+    <h2>Завдання 2. Реєстр замовлення з формулами (Google Таблиці)</h2>
+    <p class="lead">
+      1) Введіть у <code>E2</code> формулу <code>=C2*D2</code> та натисніть <strong>Застосувати</strong> або <strong>Підставити формулу в E2</strong>.<br />
+      2) Натисніть <strong>Протягнути формулу E2→E19</strong>.<br />
+      3) У <code>E20</code> підставте формулу підсумку <code>=СУММ(E2:E19)</code> або <code>=SUM(E2:E19)</code>.<br />
+      4) Оформіть заголовки та рядок підсумку.
+    </p>
+
+    <div class="toolbar-row">
+      <button type="button" class="btn btn-secondary" onclick="autofillE2()">Підставити формулу в E2</button>
+      <button type="button" class="btn btn-secondary" onclick="dragFormula()">Протягнути формулу E2→E19</button>
+      <button type="button" class="btn btn-secondary" onclick="autofillE20()">Підставити підсумок у E20</button>
+      <button type="button" class="btn btn-secondary" onclick="formatSheet()">Оформити таблицю</button>
+    </div>
+
+    <div class="grid-2" style="margin-bottom: 12px;">
+      <div>
+        <label class="field-label" for="formulaE2Input">Формула для комірки E2</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="formulaE2Input" placeholder="=C2*D2" />
+          <button type="button" class="btn btn-primary" onclick="applyE2Formula()">Застосувати</button>
+        </div>
+      </div>
+      <div>
+        <label class="field-label" for="formulaE20Input">Формула підсумку для комірки E20</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="formulaE20Input" placeholder="=СУММ(E2:E19) або =SUM(E2:E19)" />
+          <button type="button" class="btn btn-primary" onclick="applyE20Formula()">Застосувати E20</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="sheet" id="orderSheet">
+        <thead>
+          <tr>
+            <th>Рядок</th>
+            <th>A (№)</th>
+            <th>B (Найменування товару)</th>
+            <th>C (Кількість)</th>
+            <th>D (Ціна за од., грн)</th>
+            <th>E (Сума, грн)</th>
+          </tr>
+        </thead>
+        <tbody id="sheetBody"></tbody>
+      </table>
+    </div>
+
+    <div id="feedback2" class="feedback"></div>
+
+    <div class="nav-footer">
+      <button type="button" class="btn btn-secondary" onclick="goToStep(1)">← Назад</button>
+      <div class="nav-right">
+        <button type="button" class="btn btn-success" onclick="checkTask2()">Перевірити Завдання 2</button>
+        <button type="button" class="btn btn-primary" onclick="goToStep(3)">Далі: Форми →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. ЗАВДАННЯ 3 -->
+  <section class="card screen" id="screen-3">
+    <h2>Завдання 3. Автоматизований збір даних через Google Форми</h2>
+    <p class="lead">
+      Налаштуйте тип відповіді та обов’язковість для всіх 6 запитань анкети, створіть зв’язану Google Таблицю
+      у вкладці <strong>«Відповіді та посилання»</strong> та оберіть правильний спосіб поширення посилання.
+    </p>
+
+    <div class="tabs">
+      <button type="button" class="tab-btn active" id="tabBtnQuestions" onclick="switchFormTab('questions')">Запитання (6)</button>
+      <button type="button" class="tab-btn" id="tabBtnResponses" onclick="switchFormTab('responses')">Відповіді та посилання</button>
+    </div>
+
+    <div id="formTabQuestions"></div>
+
+    <div id="formTabResponses" style="display:none;">
+      <div class="q-card">
+        <div class="q-title">Зв’язування з базою даних (Google Таблиці)</div>
+        <p class="lead" style="margin-top:0; font-size:14px;">
+          Натисніть кнопку нижче, щоб прив’язати таблицю <code id="sheetNamePreview">Відповіді_Анкета_Студент</code> до форми.
+        </p>
+        <div class="toolbar-row" style="margin-bottom:0;">
+          <button type="button" class="btn btn-primary" onclick="linkResponsesSheet()">Створити та зв’язати таблицю відповідей</button>
+          <span style="font-size:14px;">Статус: <strong id="linkStatusText">Таблицю ще не зв’язано.</strong></span>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <label class="field-label" for="shareMethodSelect">Поширення посилання респондентам</label>
+        <p class="lead" style="margin-top:0; font-size:14px;">Оберіть коректний спосіб надіслати анкету:</p>
+        <select id="shareMethodSelect">
+          <option value="">-- Оберіть варіант --</option>
+          <option value="url_classroom">Скопіювати посилання (URL) та надіслати у Classroom / чат</option>
